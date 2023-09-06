@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace aspnetapp
 {
-    public partial class CounterContext : DbContext
+    public partial class ExpressContext : DbContext
     {
-        public CounterContext()
+        public ExpressContext()
         {
         }
-        public DbSet<Counter> Counters { get; set; } = null!;
-        public CounterContext(DbContextOptions<CounterContext> options)
+
+        public ExpressContext(DbContextOptions<ExpressContext> options)
             : base(options)
         {
         }
@@ -25,7 +22,7 @@ namespace aspnetapp
                 var addressParts = Environment.GetEnvironmentVariable("MYSQL_ADDRESS")?.Split(':');
                 var host = addressParts?[0];
                 var port = addressParts?[1];
-                var connstr = $"server={host};port={port};user={username};password={password};database=aspnet_demo";
+                var connstr = $"server={host};port={port};user={username};password={password};database=expressdb";
                 optionsBuilder.UseMySql(connstr, Microsoft.EntityFrameworkCore.ServerVersion.Parse("5.7.18-mysql"));
             }
         }
@@ -39,5 +36,8 @@ namespace aspnetapp
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+        public DbSet<Counter> Counters { get; set; } = null!;
+        public DbSet<Express> Expresses { get; set; } = null!;
     }
 }

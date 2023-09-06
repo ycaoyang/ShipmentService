@@ -1,18 +1,14 @@
 #nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using aspnetapp;
 
-public class CounterRequest {
-    public string action { get; set; }
+public class CounterRequest
+{
+    public string Action { get; set; }
 }
-public class CounterResponse {
-    public int data { get; set; }
+public class CounterResponse
+{
+    public int Data { get; set; }
 }
 
 namespace aspnetapp.Controllers
@@ -21,33 +17,35 @@ namespace aspnetapp.Controllers
     [ApiController]
     public class CounterController : ControllerBase
     {
-        private readonly CounterContext _context;
+        private readonly ExpressContext _context;
 
-        public CounterController(CounterContext context)
+        public CounterController(ExpressContext context)
         {
             _context = context;
         }
-        private async Task<Counter> getCounterWithInit()
+
+        private async Task<Counter> GetCounterWithInit()
         {
             var counters = await _context.Counters.ToListAsync();
-            if (counters.Count() > 0)
+            if (counters.Any())
             {
                 return counters[0];
             }
             else
             {
-                var counter = new Counter { count = 0, createdAt = DateTime.Now, updatedAt = DateTime.Now };
+                var counter = new Counter { Count = 0, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now };
                 _context.Counters.Add(counter);
                 await _context.SaveChangesAsync();
                 return counter;
             }
         }
+
         // GET: api/count
         [HttpGet]
         public async Task<ActionResult<CounterResponse>> GetCounter()
         {
-            var counter =  await getCounterWithInit();
-            return new CounterResponse { data = counter.count };
+            var counter = await GetCounterWithInit();
+            return new CounterResponse { Data = counter.Count };
         }
 
         // POST: api/Counter
@@ -55,21 +53,24 @@ namespace aspnetapp.Controllers
         [HttpPost]
         public async Task<ActionResult<CounterResponse>> PostCounter(CounterRequest data)
         {
-            if (data.action == "inc") {
-                var counter = await getCounterWithInit();
-                counter.count += 1;
-                counter.updatedAt = DateTime.Now;
+            if (data.Action == "inc")
+            {
+                var counter = await GetCounterWithInit();
+                counter.Count += 1;
+                counter.UpdatedAt = DateTime.Now;
                 await _context.SaveChangesAsync();
-                return new CounterResponse { data = counter.count };
+                return new CounterResponse { Data = counter.Count };
             }
-            else if (data.action == "clear") {
-                var counter = await getCounterWithInit();
-                counter.count = 0;
-                counter.updatedAt = DateTime.Now;
+            else if (data.Action == "clear")
+            {
+                var counter = await GetCounterWithInit();
+                counter.Count = 0;
+                counter.UpdatedAt = DateTime.Now;
                 await _context.SaveChangesAsync();
-                return new CounterResponse { data = counter.count };
+                return new CounterResponse { Data = counter.Count };
             }
-            else {
+            else
+            {
                 return BadRequest();
             }
         }
